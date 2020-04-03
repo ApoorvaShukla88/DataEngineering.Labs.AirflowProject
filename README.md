@@ -9,3 +9,6 @@
 6. Aggregate the data on the basis of requirement
 7. Do the analysis
 8. Make the reports on the basis of analysis
+
+
+![description_if_image_fails_to_load](/Users/amishra/DEV/DataEngineering.Labs.AirflowProject/dags/airflowImg.jpg)
