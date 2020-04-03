@@ -11,4 +11,4 @@
 8. Make the reports on the basis of analysis
 
 
-![description_if_image_fails_to_load](airflowImg.jpg)
+![description_if_image_fails_to_load](dags/airflowImg.jpg)
