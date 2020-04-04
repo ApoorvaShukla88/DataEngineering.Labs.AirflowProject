@@ -1,17 +1,21 @@
 from datetime import timedelta
 from datetime import datetime
-from airflow.operators.dummy_operator import DummyOperator
 from airflow import DAG
+from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 import pandas as pd
 
 
 
-
-
-data = pd.read_csv('/Users/amishra/Downloads/youtube-new/FRvideos.csv', index_col=0)
+#
+# def read_file(**kwargs):
+#     data = pd.read_csv('/Users/amishra/DEV/DataEngineering.Labs.AirflowProject/DataEngg-Airflow/USvideos.csv', index_col=0)
+#     return data
+#
 
 def create_df():
+    data = pd.read_csv('/Users/amishra/DEV/DataEngineering.Labs.AirflowProject/DataEngg-Airflow/USvideos.csv',
+                       index_col=0)
     df = pd.DataFrame(data)
     print(df)
 
@@ -23,7 +27,8 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 5,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(minutes=1),
+    'on_failure_callback': None,
 }
 
 dag = DAG(
@@ -33,13 +38,25 @@ dag = DAG(
     description='Custom DAG ',
 )
 
-read_operator = PythonOperator(
-    task_id='read_task',
-    provide_context=True,
-    python_callable=data,
+download_operator = BashOperator(
+    task_id='download_task',
+    bash_command='kaggle datasets download datasnaek/youtube-new -p /Users/amishra/DEV/DataEngineering.Labs.AirflowProject/DataEngg-Airflow',
     dag=dag,
 )
 
+unzip_operator = BashOperator(
+    task_id='unzip_downloaded_files',
+    bash_command='unzip /Users/amishra/DEV/DataEngineering.Labs.AirflowProject/DataEngg-Airflow/youtube-new.zip',
+    dag=dag,
+)
+
+
+# read_operator = PythonOperator(
+#     task_id='read_task',
+#     provide_context=True,
+#     python_callable=read_file,
+#     dag=dag,
+# )
 
 create_df_op = PythonOperator(
     task_id='create_Dataframe',
@@ -49,9 +66,4 @@ create_df_op = PythonOperator(
 )
 
 
-
-
-
-
-
-
+download_operator >> unzip_operator >> create_df_op
