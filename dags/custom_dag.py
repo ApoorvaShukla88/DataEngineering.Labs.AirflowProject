@@ -6,6 +6,9 @@ from airflow.operators.python_operator import PythonOperator
 import pandas as pd
 
 
+
+
+
 data = pd.read_csv('/Users/amishra/Downloads/youtube-new/FRvideos.csv', index_col=0)
 
 def create_df():
